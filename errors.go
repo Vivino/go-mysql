@@ -37,7 +37,7 @@ var (
 	errBadConnNoWrite = errors.New("bad connection")
 )
 
-var errLog = Logger(log.New(os.Stderr, "[mysql] ", log.Ldate|log.Ltime|log.Lshortfile))
+var errLog = Logger(log.New(os.Stderr, "[mysql-fork] ", log.Ldate|log.Ltime|log.Lshortfile))
 
 // Logger is used to log critical error messages.
 type Logger interface {
