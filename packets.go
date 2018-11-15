@@ -30,6 +30,9 @@ func (mc *mysqlConn) readPacket() ([]byte, error) {
 		// read packet header
 		data, err := mc.buf.readNext(4)
 		if err != nil {
+			if timeoutError(err) {
+				return nil, err
+			}
 			if cerr := mc.canceled.Value(); cerr != nil {
 				return nil, cerr
 			}
@@ -66,6 +69,9 @@ func (mc *mysqlConn) readPacket() ([]byte, error) {
 		// read packet body [pktLen bytes]
 		data, err = mc.buf.readNext(pktLen)
 		if err != nil {
+			if timeoutError(err) {
+				return nil, err
+			}
 			if cerr := mc.canceled.Value(); cerr != nil {
 				return nil, cerr
 			}

@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"os"
 )
 
@@ -62,4 +63,12 @@ type MySQLError struct {
 
 func (me *MySQLError) Error() string {
 	return fmt.Sprintf("Error %d: %s", me.Number, me.Message)
+}
+
+func timeoutError(err error) bool {
+	if err == nil {
+		return false
+	}
+	ne, ok := err.(*net.OpError)
+	return ok && ne.Timeout()
 }

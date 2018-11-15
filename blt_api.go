@@ -1,8 +1,10 @@
 package mysql
 
 import (
+	"context"
 	"database/sql/driver"
 	"errors"
+	"time"
 )
 
 // ExtendConn creates an extended connection.
@@ -29,7 +31,17 @@ func (c *ExtendedConn) Exec(query string) error {
 }
 
 // ReadPacket reads a packet from a given connection.
-func (c *ExtendedConn) ReadPacket() ([]byte, error) {
+func (c *ExtendedConn) ReadPacket(ctx context.Context) ([]byte, error) {
+	if dl, ok := ctx.Deadline(); ok {
+		dur := dl.Sub(time.Now())
+		if dur < 0 {
+			return nil, context.DeadlineExceeded
+		}
+		c.buf.timeout = dur
+	} else {
+		c.buf.timeout = 0
+	}
+
 	return c.readPacket()
 }
 
