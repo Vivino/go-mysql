@@ -25,6 +25,12 @@ type ExtendedConn struct {
 	*mysqlConn
 }
 
+// Close ...
+func (c *ExtendedConn) Close() error {
+	c.buf.length = 0
+	return c.mysqlConn.Close()
+}
+
 // Exec ...
 func (c *ExtendedConn) Exec(query string) error {
 	return c.exec(query)
