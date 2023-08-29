@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"os"
 )
 
@@ -37,7 +38,7 @@ var (
 	errBadConnNoWrite = errors.New("bad connection")
 )
 
-var errLog = Logger(log.New(os.Stderr, "[mysql] ", log.Ldate|log.Ltime|log.Lshortfile))
+var errLog = Logger(log.New(os.Stderr, "[mysql-fork] ", log.Ldate|log.Ltime|log.Lshortfile))
 
 // Logger is used to log critical error messages.
 type Logger interface {
@@ -62,4 +63,12 @@ type MySQLError struct {
 
 func (me *MySQLError) Error() string {
 	return fmt.Sprintf("Error %d: %s", me.Number, me.Message)
+}
+
+func timeoutError(err error) bool {
+	if err == nil {
+		return false
+	}
+	ne, ok := err.(*net.OpError)
+	return ok && ne.Timeout()
 }
